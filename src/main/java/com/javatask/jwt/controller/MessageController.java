@@ -45,15 +45,18 @@ public class MessageController {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(message.getMessage());
 
-        if ( matcher.matches() ) {
-            // Get limit messages
-            int historyLimit = Integer.parseInt(matcher.group(2));
-            return ResponseEntity.ok(messageService.getMessagesByUserByLimit(message.getName(),historyLimit));
-        }else if(userName.equals(message.getName())){
-            // Save message
-            return ResponseEntity.ok(messageService.save(message));
+        if(userName.equals(message.getName())){
+            if ( matcher.matches() ) {
+                // Get limit messages
+                int historyLimit = Integer.parseInt(matcher.group(2));
+                return ResponseEntity.ok(messageService.getMessagesByUserByLimit(message.getName(),historyLimit));
+            }else{
+                // Save message
+                return ResponseEntity.ok(messageService.save(message));
+            }
+        }else{
+            return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
         }
-        return new ResponseEntity<>("User not found", HttpStatus.BAD_REQUEST);
     }
 
 }
